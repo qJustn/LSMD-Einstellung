@@ -1,579 +1,178 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>LSMD – Prakti/Sani Einstellung</title>
-  <style>
-    :root{
-      --bg:#0b1220; --card:#0f1b33; --muted:#9fb3d1; --text:#eaf1ff;
-      --accent:#4aa3ff; --ok:#3ddc97; --warn:#ffd166; --bad:#ff5c7a;
-      --border:rgba(255,255,255,.08);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(74,163,255,.25), transparent 60%),
-                  radial-gradient(1000px 500px at 110% 20%, rgba(61,220,151,.18), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-    }
-    .wrap{max-width:1080px; margin:28px auto; padding:0 16px;}
-    header{
-      display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin-bottom:16px;
-    }
-    .title{
-      display:flex; flex-direction:column; gap:4px;
-    }
-    .title h1{margin:0; font-size:22px; letter-spacing:.2px;}
-    .title p{margin:0; color:var(--muted); font-size:13px}
-    .pillbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
-    .pill{
-      border:1px solid var(--border); background:rgba(255,255,255,.03);
-      padding:8px 10px; border-radius:999px; font-size:12px; color:var(--muted);
-      display:flex; align-items:center; gap:8px;
-    }
-    .pill strong{color:var(--text); font-weight:700}
-    .grid{display:grid; gap:14px; grid-template-columns: 1.1fr .9fr;}
-    @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+<meta charset="UTF-8">
+<title>LSMD – Prakti/Sani Einstellung</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .card{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border-radius:16px; padding:14px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.25);
-    }
-    .card h2{margin:0 0 8px; font-size:14px; letter-spacing:.3px; text-transform:uppercase; color:var(--muted);}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-    label{font-size:12px; color:var(--muted)}
-    input, textarea, select{
-      width:100%; padding:10px 10px; border-radius:12px;
-      border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text);
-      outline:none;
-    }
-    textarea{min-height:92px; resize:vertical;}
-    .two{display:grid; gap:10px; grid-template-columns:1fr 1fr;}
-    @media (max-width:520px){.two{grid-template-columns:1fr}}
+<style>
+:root {
+  --bg: #0e1a24;
+  --card: #132634;
+  --accent: #e53935;
+  --accent-soft: #ffebee;
+  --text: #eaf2f8;
+  --muted: #9fb3c8;
+  --success: #43a047;
+}
 
-    .progress{
-      border:1px solid var(--border); border-radius:12px; overflow:hidden; background:rgba(0,0,0,.18);
-      height:12px;
-    }
-    .bar{height:100%; width:0%; background:linear-gradient(90deg, var(--accent), #7c5cff);}
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
 
-    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
-    button{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.06); color:var(--text);
-      padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600;
-    }
-    button:hover{background:rgba(255,255,255,.10)}
-    .primary{background:rgba(74,163,255,.16); border-color:rgba(74,163,255,.35)}
-    .primary:hover{background:rgba(74,163,255,.24)}
-    .danger{background:rgba(255,92,122,.12); border-color:rgba(255,92,122,.35)}
-    .danger:hover{background:rgba(255,92,122,.18)}
-    .ok{background:rgba(61,220,151,.12); border-color:rgba(61,220,151,.35)}
-    .ok:hover{background:rgba(61,220,151,.18)}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding: 30px;
+}
 
-    .phase{
-      margin-top:14px; border-radius:14px; overflow:hidden; border:1px solid var(--border);
-    }
-    .ph-head{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      padding:10px 12px; font-weight:800; letter-spacing:.2px; font-size:13px;
-    }
-    .tag{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); color:rgba(255,255,255,.85)}
-    .ph-body{padding:10px 12px; background:rgba(0,0,0,.12)}
-    .item{
-      display:flex; gap:10px; align-items:flex-start; padding:10px 10px; border-radius:12px;
-      border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.03); margin-bottom:8px;
-    }
-    .item:last-child{margin-bottom:0}
-    .item input[type="checkbox"]{width:18px; height:18px; margin-top:2px}
-    .it-main{flex:1}
-    .it-title{font-weight:800; font-size:13px; margin:0 0 2px}
-    .it-sub{margin:0; color:var(--muted); font-size:12px; line-height:1.35}
-    .mini{
-      margin-top:10px; padding:10px 12px; border-radius:12px;
-      border:1px dashed rgba(255,255,255,.18); color:rgba(255,255,255,.88);
-      background:rgba(0,0,0,.10); font-size:12px;
-    }
-    .kbd{display:inline-block; padding:2px 6px; border-radius:6px; border:1px solid var(--border); background:rgba(255,255,255,.04); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px;}
-    .muted{color:var(--muted)}
-    .small{font-size:12px}
-    .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0;}
-    .statusline{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center}
-    .badge{
-      padding:6px 10px; border-radius:999px; border:1px solid var(--border);
-      background:rgba(255,255,255,.04); font-size:12px; color:var(--muted);
-    }
-    .badge strong{color:var(--text)}
-    .print-note{display:none}
-    @media print{
-      body{background:#fff; color:#000}
-      .card, .phase{box-shadow:none; background:#fff}
-      .wrap{max-width:900px}
-      button, .pillbar{display:none!important}
-      .print-note{display:block; margin-top:6px; color:#111}
-      input, textarea{border:1px solid #ddd; color:#000}
-      .item{background:#fff; border:1px solid #ddd}
-      .ph-body{background:#fff}
-      .muted{color:#333}
-      .badge{border:1px solid #ddd}
-    }
-  </style>
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 32px;
+  color: var(--accent);
+}
+
+header p {
+  color: var(--muted);
+}
+
+.section {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section h2 {
+  margin-top: 0;
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.checklist li:last-child {
+  border-bottom: none;
+}
+
+.checklist input {
+  margin-top: 4px;
+  transform: scale(1.2);
+}
+
+.checklist span {
+  line-height: 1.4;
+}
+
+.note {
+  background: rgba(229,57,53,0.1);
+  border-left: 4px solid var(--accent);
+  padding: 12px;
+  border-radius: 6px;
+  color: var(--accent-soft);
+  font-size: 14px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 13px;
+  color: var(--muted);
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title">
-        <h1>🚑 LSMD – Prakti/Sani Einstellung</h1>
-        <p>Kurzes Onboarding (8–10 Min). Speichert automatisch im Browser. ✅</p>
-        <p class="print-note small">Ausdruck: Diese Seite ist als Checkliste druckbar (Strg+P).</p>
-      </div>
-      <div class="pillbar">
-        <div class="pill">⏱️ <strong id="timer">00:00</strong></div>
-        <div class="pill">📌 Fortschritt: <strong id="progressText">0/0</strong></div>
-        <div class="pill">🎯 Status: <strong id="goalText">—</strong></div>
-      </div>
-    </header>
+<div class="container">
 
-    <div class="grid">
-      <!-- LEFT: Checklist -->
-      <div class="card">
-        <h2>Checkliste</h2>
-        <div class="statusline">
-          <div style="flex:1; min-width:240px">
-            <div class="progress"><div class="bar" id="bar"></div></div>
-          </div>
-          <div class="badge">Pflicht erledigt: <strong id="mustDone">0</strong>/<strong id="mustTotal">0</strong></div>
-          <div class="badge">Optional: <strong id="optDone">0</strong>/<strong id="optTotal">0</strong></div>
-        </div>
+<header>
+  <h1>LSMD – Prakti/Sani Einstellung</h1>
+  <p>Interne Checkliste für Ausbilder • Kurz • Klar • Pflichtpunkte</p>
+</header>
 
-        <div id="phases"></div>
+<!-- VOR DER EINSTELLUNG -->
+<div class="section">
+<h2>🧠 Vor der Einstellung</h2>
+<ul class="checklist">
+  <li><input type="checkbox"><span>Identität & Dienstnummer geprüft</span></li>
+  <li><input type="checkbox"><span>Rang erfüllt (mind. Allgemeiner Mediziner)</span></li>
+  <li><input type="checkbox"><span>Keine negativen Auffälligkeiten</span></li>
+  <li><input type="checkbox"><span>Aktivität & Auftreten geprüft</span></li>
+</ul>
+</div>
 
-        <div class="sep"></div>
-        <div class="mini">
-          <strong>Mentor-Aufgabe (nicht in der Einstellung):</strong>
-          Karriere/Ränge erklären · Verwaltung im Detail · MD komplett zeigen · längere Theorie · extra Fragen.<br>
-          <span class="muted">Ziel: Bewerber ist einsatzfähig – Details folgen in der ersten Schicht.</span>
-        </div>
+<!-- KURZE VORSTELLUNG -->
+<div class="section">
+<h2>👋 Vorstellung & Grundinfos</h2>
+<ul class="checklist">
+  <li><input type="checkbox"><span>LSMD & Abteilung kurz erklärt</span></li>
+  <li><input type="checkbox"><span>Dienstpflicht (18–23 Uhr) erklärt</span></li>
+  <li><input type="checkbox"><span>Erwartungen an Prakti/Sani erklärt</span></li>
+</ul>
+</div>
 
-        <div class="btns">
-          <button class="primary" id="startBtn">▶ Start</button>
-          <button id="pauseBtn">⏸ Pause</button>
-          <button id="resetTimerBtn">🔁 Timer Reset</button>
-          <button class="ok" id="copyBtn">📋 Zusammenfassung kopieren</button>
-          <button id="printBtn">🖨️ Drucken</button>
-          <button class="danger" id="newBtn">🧹 Neuer Bewerber (alles reset)</button>
-        </div>
-      </div>
+<!-- DISCORD -->
+<div class="section">
+<h2>💬 Discord-Einweisung</h2>
+<ul class="checklist">
+  <li><input type="checkbox"><span>Discord-Regeln erklärt</span></li>
+  <li><input type="checkbox"><span>Wichtige Channels gezeigt</span></li>
+  <li><input type="checkbox"><span>Namensschema erklärt</span></li>
+</ul>
+</div>
 
-      <!-- RIGHT: Bewerberdaten + Notizen -->
-      <div class="card">
-        <h2>Bewerberdaten</h2>
-        <div class="two">
-          <div>
-            <label>Bewerber Name</label>
-            <input id="appName" placeholder="z.B. Max Mustermann" />
-          </div>
-          <div>
-            <label>Dienstnummer</label>
-            <input id="appDN" placeholder="z.B. 214" />
-          </div>
-          <div>
-            <label>Ausbilder</label>
-            <input id="trainer" placeholder="z.B. Bonez" />
-          </div>
-          <div>
-            <label>Mentor</label>
-            <input id="mentor" placeholder="z.B. Lisa" />
-          </div>
-        </div>
+<!-- RP / PRAXIS -->
+<div class="section">
+<h2>🚑 RP & Praxis</h2>
+<ul class="checklist">
+  <li><input type="checkbox"><span>MD-Ausrüstung erklärt</span></li>
+  <li><input type="checkbox"><span>Funk & Panic Button erklärt</span></li>
+  <li><input type="checkbox"><span>Grundabläufe im Einsatz erklärt</span></li>
+</ul>
+</div>
 
-        <div style="margin-top:10px">
-          <label>Hinweise / Besonderheiten</label>
-          <textarea id="notes" placeholder="z.B. Funkprobleme, muss LKW nachholen, Fragen offen..."></textarea>
-        </div>
+<!-- ABSCHLUSS -->
+<div class="section">
+<h2>✅ Abschluss</h2>
+<ul class="checklist">
+  <li><input type="checkbox"><span>Rolle vergeben</span></li>
+  <li><input type="checkbox"><span>Praktikant einem Ausbilder zugewiesen</span></li>
+  <li><input type="checkbox"><span>Fragen geklärt</span></li>
+</ul>
 
-        <div class="sep"></div>
+<div class="note">
+⚠️ Hinweis: Testphase beachten. Bei Verstößen → Meldung an die Abteilungsleitung.
+</div>
+</div>
 
-        <h2>Standard-Sätze</h2>
-        <div class="mini">
-          <div><strong>Begrüßung:</strong> „Willkommen im LSMD. Du bist jetzt Praktikant. Du bekommst gleich einen Mentor, der dir alles Weitere im Dienst erklärt.“</div>
-          <div style="margin-top:8px"><strong>Dienstpflicht:</strong> „Dienstpflicht 18–23 Uhr. Wenn du nicht kannst, melde dich ab.“</div>
-          <div style="margin-top:8px"><strong>Übergabe:</strong> „Mentor übernimmt jetzt die weitere Einweisung. Fragen jederzeit.“</div>
-          <div style="margin-top:8px" class="muted small">Tipp: Pro Thema maximal 2–3 Sätze, sonst verliert man Bewerber.</div>
-        </div>
+<footer>
+made by <strong>BONEZ</strong> • LSMD Prakti/Sani
+</footer>
 
-        <div class="sep"></div>
-
-        <h2>Export</h2>
-        <div class="btns">
-          <button id="exportBtn">⬇ Export JSON</button>
-          <button id="importBtn">⬆ Import JSON</button>
-        </div>
-        <input id="importFile" type="file" accept="application/json" style="display:none" />
-        <p class="muted small" style="margin:10px 0 0">
-          Auto-Save ist lokal (Browser). Export ist optional, falls ihr es sichern/teilen wollt.
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ====== CONFIG (kannst du anpassen) ======
-    const CONFIG = {
-      goalPointsPerWeek: 5,
-      roleName: "PraktiSani",
-      phases: [
-        {
-          key: "p1",
-          color: "rgba(255,92,122,.16)",
-          border: "rgba(255,92,122,.35)",
-          title: "🟥 PHASE 1 – VORAUSSETZUNGEN",
-          tag: "Pflicht",
-          items: [
-            { id:"p1_a", must:true, title:"PKW- & LKW-Führerschein geprüft", sub:"Kurz checken – ohne beides keine Einstellung." },
-            { id:"p1_b", must:true, title:"Aktencheck & Rechnung (max. 3 Tage)", sub:"3+ Tage straffrei, Rechnung aktuell." },
-            { id:"p1_c", must:true, title:"Durchsuchung durchgeführt", sub:"Kurz – keine langen Diskussionen." },
-            { id:"p1_d", must:true, title:"Dienstpflicht erklärt (18–23 Uhr)", sub:"1 Satz reicht. Abmeldung, wenn nicht möglich." },
-          ]
-        },
-        {
-          key: "p2",
-          color: "rgba(255,209,102,.18)",
-          border: "rgba(255,209,102,.40)",
-          title: "🟨 PHASE 2 – KURZ-ONBOARDING",
-          tag: "Pflicht",
-          items: [
-            { id:"p2_a", must:true, title:"Begrüßung ausgesprochen", sub:"Standard-Satz (rechts) nutzen." },
-            { id:"p2_b", must:true, title:"Rolle erklärt (Praktikant)", sub:"Mentor übernimmt Details im Dienst." },
-          ],
-          note: "Standard-Satz: „Du bekommst einen Mentor, der dir im Dienst alles Weitere erklärt.“"
-        },
-        {
-          key: "p3",
-          color: "rgba(74,163,255,.16)",
-          border: "rgba(74,163,255,.38)",
-          title: "🟦 PHASE 3 – DISCORD & VERWALTUNG",
-          tag: "Pflicht",
-          items: [
-            { id:"p3_a", must:true, title:"Einstellung im Discord eingetragen", sub:"Name + Dienstnummer." },
-            { id:"p3_b", must:true, title:"Rang & Ausweis gesetzt", sub:"Praktikant + korrekte Daten." },
-            { id:"p3_c", must:true, title:"Steam- & Discord-ID geprüft", sub:"Sicherstellen, dass es passt." },
-            { id:"p3_d", must:true, title:"SOP / Dienstcheck / Verwaltung gezeigt", sub:"Nur zeigen, nicht alles erklären." },
-          ]
-        },
-        {
-          key: "p4",
-          color: "rgba(124,92,255,.16)",
-          border: "rgba(124,92,255,.38)",
-          title: "🟪 PHASE 4 – RP-BASICS (nur Kern)",
-          tag: "Pflicht",
-          items: [
-            { id:"p4_a", must:true, title:"F6 erklärt", sub:"Kurz zeigen, wofür es da ist." },
-            { id:"p4_b", must:true, title:"Dispatch gebunden", sub:"Menü öffnen + einmal kurz erklären." },
-            { id:"p4_c", must:true, title:"Funk eingestellt (2.00)", sub:"Frequenz setzen – fertig." },
-            { id:"p4_d", must:true, title:"Panic Button gebunden", sub:"Nur im Notfall. Details später." },
-            { id:"p4_e", must:false, title:"Fingerabdruck / GPS (falls Standard)", sub:"Nur wenn bei euch Pflicht/Standard.", optional:true },
-          ]
-        },
-        {
-          key: "p5",
-          color: "rgba(61,220,151,.14)",
-          border: "rgba(61,220,151,.36)",
-          title: "🟩 PHASE 5 – ÜBERGABE",
-          tag: "Pflicht",
-          items: [
-            { id:"p5_a", must:true, title:"Praktikant zugewiesen", sub:"Im System/Discord festhalten." },
-            { id:"p5_b", must:true, title:"Mentor festgelegt", sub:"Wer übernimmt 1. Schicht?" },
-          ],
-          note: "Abschluss: „Mentor übernimmt jetzt die weitere Einweisung. Fragen jederzeit.“"
-        }
-      ]
-    };
-
-    // ====== STATE ======
-    const STORAGE_KEY = "lsmd_prakti_sani_setup_v1";
-    let state = {
-      checks: {}, // id: boolean
-      meta: { appName:"", appDN:"", trainer:"", mentor:"", notes:"" },
-      timer: { running:false, seconds:0, lastTick:null }
-    };
-
-    // ====== RENDER ======
-    const phasesEl = document.getElementById("phases");
-    function render(){
-      phasesEl.innerHTML = "";
-      for(const ph of CONFIG.phases){
-        const phWrap = document.createElement("div");
-        phWrap.className = "phase";
-        phWrap.style.borderColor = ph.border;
-
-        const head = document.createElement("div");
-        head.className = "ph-head";
-        head.style.background = ph.color;
-        head.innerHTML = `<div>${ph.title}</div><div class="tag">${ph.tag}</div>`;
-
-        const body = document.createElement("div");
-        body.className = "ph-body";
-
-        ph.items.forEach(it=>{
-          const checked = !!state.checks[it.id];
-          const item = document.createElement("div");
-          item.className = "item";
-          item.innerHTML = `
-            <input type="checkbox" ${checked ? "checked":""} data-id="${it.id}">
-            <div class="it-main">
-              <p class="it-title">${it.title}${it.optional ? ' <span class="muted">(optional)</span>' : ''}</p>
-              <p class="it-sub">${it.sub}</p>
-            </div>
-          `;
-          body.appendChild(item);
-        });
-
-        if(ph.note){
-          const note = document.createElement("div");
-          note.className = "mini";
-          note.textContent = ph.note;
-          body.appendChild(note);
-        }
-
-        phWrap.appendChild(head);
-        phWrap.appendChild(body);
-        phasesEl.appendChild(phWrap);
-      }
-      hookCheckboxes();
-      updateStats();
-    }
-
-    function hookCheckboxes(){
-      document.querySelectorAll('input[type="checkbox"][data-id]').forEach(cb=>{
-        cb.addEventListener("change", (e)=>{
-          const id = e.target.getAttribute("data-id");
-          state.checks[id] = e.target.checked;
-          save();
-          updateStats();
-        });
-      });
-    }
-
-    // ====== STATS / PROGRESS ======
-    function updateStats(){
-      const allItems = CONFIG.phases.flatMap(p=>p.items);
-      const mustItems = allItems.filter(i=>i.must && !i.optional);
-      const optItems = allItems.filter(i=>i.optional);
-
-      const done = allItems.filter(i=>state.checks[i.id]).length;
-      const total = allItems.length;
-
-      const mustDone = mustItems.filter(i=>state.checks[i.id]).length;
-      const optDone = optItems.filter(i=>state.checks[i.id]).length;
-
-      const bar = document.getElementById("bar");
-      bar.style.width = total ? `${Math.round((done/total)*100)}%` : "0%";
-
-      document.getElementById("progressText").textContent = `${done}/${total}`;
-      document.getElementById("mustDone").textContent = mustDone;
-      document.getElementById("mustTotal").textContent = mustItems.length;
-      document.getElementById("optDone").textContent = optDone;
-      document.getElementById("optTotal").textContent = optItems.length;
-
-      const goalText = document.getElementById("goalText");
-      if(mustItems.length && mustDone === mustItems.length){
-        goalText.textContent = "✅ Pflicht fertig";
-        goalText.style.color = "var(--ok)";
-      } else {
-        goalText.textContent = "❌ Pflicht offen";
-        goalText.style.color = "var(--warn)";
-      }
-    }
-
-    // ====== TIMER ======
-    const timerEl = document.getElementById("timer");
-    function formatTime(sec){
-      const m = String(Math.floor(sec/60)).padStart(2,"0");
-      const s = String(sec%60).padStart(2,"0");
-      return `${m}:${s}`;
-    }
-    function tick(){
-      if(!state.timer.running) return;
-      const now = Date.now();
-      if(state.timer.lastTick){
-        const delta = Math.floor((now - state.timer.lastTick)/1000);
-        if(delta>0) state.timer.seconds += delta;
-      }
-      state.timer.lastTick = now;
-      timerEl.textContent = formatTime(state.timer.seconds);
-      save();
-    }
-    setInterval(tick, 500);
-
-    document.getElementById("startBtn").addEventListener("click", ()=>{
-      state.timer.running = true;
-      state.timer.lastTick = Date.now();
-      save();
-    });
-    document.getElementById("pauseBtn").addEventListener("click", ()=>{
-      state.timer.running = false;
-      state.timer.lastTick = null;
-      save();
-    });
-    document.getElementById("resetTimerBtn").addEventListener("click", ()=>{
-      state.timer.running = false;
-      state.timer.seconds = 0;
-      state.timer.lastTick = null;
-      timerEl.textContent = "00:00";
-      save();
-    });
-
-    // ====== META INPUTS ======
-    const metaFields = ["appName","appDN","trainer","mentor","notes"];
-    metaFields.forEach(id=>{
-      const el = document.getElementById(id);
-      el.addEventListener("input", ()=>{
-        state.meta[id] = el.value;
-        save();
-      });
-    });
-
-    // ====== SUMMARY COPY ======
-    document.getElementById("copyBtn").addEventListener("click", async ()=>{
-      const sum = buildSummary();
-      try{
-        await navigator.clipboard.writeText(sum);
-        toast("✅ Zusammenfassung kopiert!");
-      }catch{
-        prompt("Kopieren:", sum);
-      }
-    });
-
-    function buildSummary(){
-      const allItems = CONFIG.phases.flatMap(p=>p.items);
-      const mustItems = allItems.filter(i=>i.must && !i.optional);
-      const mustDone = mustItems.filter(i=>state.checks[i.id]).length;
-
-      const name = (state.meta.appName||"—").trim();
-      const dn = (state.meta.appDN||"—").trim();
-      const tr = (state.meta.trainer||"—").trim();
-      const me = (state.meta.mentor||"—").trim();
-      const notes = (state.meta.notes||"—").trim();
-
-      const totalDone = allItems.filter(i=>state.checks[i.id]).length;
-      const total = allItems.length;
-
-      return [
-        "🩺 **LSMD – Prakti/Sani Einstellung (Protokoll)**",
-        `👤 Bewerber: **${name}** | DN: **${dn}**`,
-        `🧑‍🏫 Ausbilder: **${tr}** | Mentor: **${me}**`,
-        `⏱ Dauer (Timer): **${formatTime(state.timer.seconds)}**`,
-        `✅ Checkliste: **${totalDone}/${total}** erledigt`,
-        `📌 Pflicht: **${mustDone}/${mustItems.length}**`,
-        `📝 Hinweise: ${notes}`,
-      ].join("\n");
-    }
-
-    // ====== PRINT ======
-    document.getElementById("printBtn").addEventListener("click", ()=> window.print());
-
-    // ====== NEW RESET ======
-    document.getElementById("newBtn").addEventListener("click", ()=>{
-      if(!confirm("Alles zurücksetzen für einen neuen Bewerber?")) return;
-      state = { checks:{}, meta:{ appName:"", appDN:"", trainer:"", mentor:"", notes:"" }, timer:{ running:false, seconds:0, lastTick:null } };
-      localStorage.removeItem(STORAGE_KEY);
-      loadIntoInputs();
-      render();
-      timerEl.textContent = "00:00";
-      toast("🧹 Reset done");
-    });
-
-    // ====== EXPORT/IMPORT ======
-    document.getElementById("exportBtn").addEventListener("click", ()=>{
-      const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "lsmd-einstellung.json";
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
-
-    document.getElementById("importBtn").addEventListener("click", ()=>{
-      document.getElementById("importFile").click();
-    });
-
-    document.getElementById("importFile").addEventListener("change", async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      try{
-        const txt = await file.text();
-        const obj = JSON.parse(txt);
-        if(!obj || typeof obj !== "object") throw new Error("Bad JSON");
-        state = obj;
-        save();
-        loadIntoInputs();
-        render();
-        timerEl.textContent = formatTime(state.timer.seconds||0);
-        toast("✅ Importiert");
-      }catch(err){
-        alert("Import fehlgeschlagen: " + err);
-      } finally{
-        e.target.value = "";
-      }
-    });
-
-    // ====== SAVE/LOAD ======
-    function save(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-    function load(){
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
-        try{ state = JSON.parse(raw); }catch{}
-      }
-      loadIntoInputs();
-      timerEl.textContent = formatTime(state.timer.seconds||0);
-    }
-    function loadIntoInputs(){
-      document.getElementById("appName").value = state.meta.appName || "";
-      document.getElementById("appDN").value = state.meta.appDN || "";
-      document.getElementById("trainer").value = state.meta.trainer || "";
-      document.getElementById("mentor").value = state.meta.mentor || "";
-      document.getElementById("notes").value = state.meta.notes || "";
-    }
-
-    // ====== TOAST ======
-    let toastTimer = null;
-    function toast(msg){
-      let el = document.getElementById("toast");
-      if(!el){
-        el = document.createElement("div");
-        el.id = "toast";
-        el.style.position = "fixed";
-        el.style.bottom = "18px";
-        el.style.left = "50%";
-        el.style.transform = "translateX(-50%)";
-        el.style.padding = "10px 12px";
-        el.style.borderRadius = "12px";
-        el.style.border = "1px solid rgba(255,255,255,.14)";
-        el.style.background = "rgba(0,0,0,.55)";
-        el.style.color = "white";
-        el.style.backdropFilter = "blur(10px)";
-        el.style.zIndex = "9999";
-        el.style.fontWeight = "700";
-        el.style.fontSize = "12px";
-        document.body.appendChild(el);
-      }
-      el.textContent = msg;
-      el.style.opacity = "1";
-      if(toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>{ el.style.opacity="0"; }, 1400);
-    }
-
-    // INIT
-    load();
-    render();
-  </script>
+</div>
 </body>
 </html>
